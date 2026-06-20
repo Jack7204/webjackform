@@ -188,21 +188,19 @@
       <div class="form-group">
         <label>Lingua/e del sito</label>
         <span class="field-optional">Facoltativo</span>
-        <div class="checkbox-group">
-          <label class="check-label">
+        <!-- Pill selector: ogni lingua è un tasto toggle visivo -->
+        <div class="pill-group">
+          <label class="pill">
             <input type="checkbox" id="lingua-italiano">
-            <span class="check-box"></span>
-            <span>Italiano</span>
+            <span>🇮🇹 Italiano</span>
           </label>
-          <label class="check-label">
+          <label class="pill">
             <input type="checkbox" id="lingua-inglese">
-            <span class="check-box"></span>
-            <span>Inglese</span>
+            <span>🇬🇧 Inglese</span>
           </label>
-          <label class="check-label">
+          <label class="pill pill-alt">
             <input type="checkbox" id="lingua-altro">
-            <span class="check-box"></span>
-            <span>Altro (specificare)</span>
+            <span>+ Altra lingua</span>
           </label>
         </div>
         <div class="conditional" id="cond-lingua-altro">

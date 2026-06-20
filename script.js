@@ -894,6 +894,15 @@ function resetForm() {
 // 11. INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
+  // Sposta i badge "Facoltativo" dentro il label genitore per averli sulla stessa riga
+  document.querySelectorAll('.form-group').forEach(group => {
+    const label = group.querySelector(':scope > label');
+    const optional = label?.nextElementSibling;
+    if (optional?.classList.contains('field-optional')) {
+      label.appendChild(optional);
+    }
+  });
+
   // Imposta stato iniziale
   showStep(1);
   updateProgress();

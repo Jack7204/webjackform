@@ -239,7 +239,7 @@ body {
   margin-bottom: 0;
 }
 
-.form-group label:first-child {
+.form-group > label:first-child {
   display: block;
   font-size: .875rem;
   font-weight: 600;
@@ -343,35 +343,102 @@ select {
   cursor: pointer;
 }
 
-/* ---------- CHECKBOXES ---------- */
+/* ---------- PILL SELECTOR (usato per le lingue) ---------- */
+.pill-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-top: .625rem;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .55rem 1.125rem;
+  border: 2px solid var(--border);
+  border-radius: 99px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: .875rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: var(--white);
+  transition: all .18s ease;
+  user-select: none;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.pill:hover {
+  border-color: var(--accent);
+  color: var(--navy);
+  background: #f0f7ff;
+}
+
+.pill input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* Stato selezionato: sfondo accent, testo bianco */
+.pill:has(input:checked) {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--white);
+  font-weight: 600;
+}
+
+/* Pill tratteggiato per opzioni "Altro" */
+.pill.pill-alt {
+  border-style: dashed;
+}
+.pill.pill-alt:has(input:checked) {
+  border-style: solid;
+}
+
+/* ---------- CHECKBOXES (card style) ---------- */
 .checkbox-group {
   display: flex;
   flex-direction: column;
-  gap: .5rem;
-  margin-top: .5rem;
+  gap: .4rem;
+  margin-top: .625rem;
 }
 
 .checkbox-group.checkbox-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: .4rem .75rem;
+  gap: .4rem;
 }
 
 .check-label {
   display: flex;
   align-items: center;
-  gap: .6rem;
+  gap: .75rem;
   cursor: pointer;
   font-size: .875rem;
   color: var(--text);
-  padding: .3rem .1rem;
-  border-radius: 6px;
-  transition: color var(--transition);
+  padding: .75rem 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  transition: all .18s ease;
   user-select: none;
+  line-height: 1.35;
 }
 
 .check-label:hover {
-  color: var(--accent-dark);
+  border-color: #93c5fd;
+  background: #f8fbff;
+  color: var(--navy);
+}
+
+.check-label:has(input[type="checkbox"]:checked) {
+  border-color: var(--accent);
+  background: #eff6ff;
+  color: var(--navy);
 }
 
 .check-label input[type="checkbox"] {
@@ -382,16 +449,20 @@ select {
 }
 
 .check-box {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border: 2px solid var(--border);
-  border-radius: 4px;
+  border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: all var(--transition);
+  transition: all .18s ease;
   background: var(--white);
+}
+
+.check-label:has(input:checked) .check-box {
+  border-color: var(--accent);
 }
 
 .check-label input[type="checkbox"]:checked + .check-box {
@@ -414,23 +485,45 @@ select {
   box-shadow: 0 0 0 3px rgba(59,130,246,.25);
 }
 
-/* ---------- RADIO BUTTONS ---------- */
+/* Padding ridotto nella grid compatta */
+.checkbox-grid .check-label {
+  padding: .6rem .75rem;
+}
+
+/* ---------- RADIO BUTTONS (card style) ---------- */
 .radio-group {
   display: flex;
   flex-direction: column;
-  gap: .5rem;
-  margin-top: .5rem;
+  gap: .4rem;
+  margin-top: .625rem;
 }
 
 .radio-label {
   display: flex;
   align-items: center;
-  gap: .6rem;
+  gap: .75rem;
   cursor: pointer;
   font-size: .875rem;
   color: var(--text);
-  padding: .35rem .1rem;
+  padding: .75rem 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  transition: all .18s ease;
   user-select: none;
+  line-height: 1.35;
+}
+
+.radio-label:hover {
+  border-color: #93c5fd;
+  background: #f8fbff;
+  color: var(--navy);
+}
+
+.radio-label:has(input[type="radio"]:checked) {
+  border-color: var(--accent);
+  background: #eff6ff;
+  color: var(--navy);
 }
 
 .radio-label input[type="radio"] {
@@ -441,16 +534,20 @@ select {
 }
 
 .radio-dot {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border: 2px solid var(--border);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: all var(--transition);
+  transition: all .18s ease;
   background: var(--white);
+}
+
+.radio-label:has(input:checked) .radio-dot {
+  border-color: var(--accent);
 }
 
 .radio-label input[type="radio"]:checked + .radio-dot {
@@ -460,8 +557,8 @@ select {
 .radio-label input[type="radio"]:checked + .radio-dot::after {
   content: '';
   display: block;
-  width: 8px;
-  height: 8px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   background: var(--accent);
 }
@@ -862,6 +959,20 @@ select {
 
   .step-outcome {
     padding: 2.5rem 1.25rem !important;
+  }
+
+  /* Touch target minimo 44px per accessibilità mobile */
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  select {
+    min-height: 44px;
+    padding: .75rem .875rem;
+  }
+
+  .check-label,
+  .radio-label {
+    min-height: 44px;
   }
 }
 
