@@ -92,11 +92,12 @@ exports.handler = async (event) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from:    `${SENDER_NAME} <${SENDER_EMAIL}>`,
-        to:      [DEST_EMAIL],
-        subject: subject,
-        html:    html,
-        text:    text,
+        from:     `${SENDER_NAME} <${SENDER_EMAIL}>`,
+        to:       [DEST_EMAIL],
+        reply_to: data.clienteEmail || data.emailContatto || undefined,
+        subject:  subject,
+        html:     html,
+        text:     text,
       }),
     });
   } catch (networkErr) {
@@ -212,10 +213,16 @@ function buildEmailHtml(d) {
     <div style="${CSS.header}">
       <h1 style="${CSS.h1}">Nuova richiesta discovery</h1>
       <p style="${CSS.subtitle}">
-        Da: <strong>${esc(d.nomeAttivita || 'Nuovo cliente')}</strong>
+        Progetto: <strong>${esc(d.nomeAttivita || 'Non specificato')}</strong>
         &nbsp;·&nbsp;
         ${esc(d.dataInvio || new Date().toLocaleString('it-IT'))}
       </p>
+      <div style="margin-top:14px; padding:12px 16px; background:rgba(255,255,255,0.1); border-radius:8px; font-size:13px; line-height:1.7;">
+        <strong style="color:rgba(255,255,255,0.6); font-size:10px; text-transform:uppercase; letter-spacing:0.08em;">Contatti cliente</strong><br>
+        ${d.clienteNome ? `<span style="color:#fff;">👤 ${esc(d.clienteNome)}</span><br>` : ''}
+        ${d.clienteEmail ? `<a href="mailto:${esc(d.clienteEmail)}" style="color:#93c5fd;">✉️ ${esc(d.clienteEmail)}</a><br>` : ''}
+        ${d.clienteTelefono ? `<span style="color:#fff;">📞 ${esc(d.clienteTelefono)}</span>` : ''}
+      </div>
     </div>
 
     <!-- Body -->
@@ -239,9 +246,12 @@ function buildEmailHtml(d) {
       ])}
 
       ${section(3, 'Dati di contatto', [
-        row('Indirizzo',             display(d.indirizzo)),
-        row('Telefono / WhatsApp',   display(d.telefono)),
-        row('Email di contatto',     display(d.emailContatto)),
+        row('Nome cliente',          display(d.clienteNome)),
+        row('Email cliente',         display(d.clienteEmail)),
+        row('Tel. cliente',          display(d.clienteTelefono)),
+        row('Indirizzo attività',    display(d.indirizzo)),
+        row('Tel. attività',         display(d.telefono)),
+        row('Email sul sito',        display(d.emailContatto)),
         row('Orari di apertura',     display(d.orariApertura)),
         row('Google Maps',           display(d.googleMaps)),
         row('Social media',          display(d.socialMedia)),
@@ -291,7 +301,7 @@ function buildEmailHtml(d) {
     <!-- Footer -->
     <div style="${CSS.footer}">
       Richiesta ricevuta il ${esc(d.dataInvio || '')} ·
-      Rispondi a <a href="mailto:${esc(d.emailContatto)}" style="color:#3b82f6;">${esc(d.emailContatto)}</a>
+      Rispondi a <a href="mailto:${esc(d.clienteEmail || d.emailContatto || '')}" style="color:#3b82f6;">${esc(d.clienteEmail || d.emailContatto || 'non specificato')}</a>
     </div>
 
   </div><!-- /card -->
@@ -338,9 +348,12 @@ ${line('KPI di successo', d.kpiSuccesso)}
 
 03 — DATI DI CONTATTO
 ${sep}
-${line('Indirizzo', d.indirizzo)}
-${line('Telefono / WhatsApp', d.telefono)}
-${line('Email di contatto', d.emailContatto)}
+${line('Nome cliente', d.clienteNome)}
+${line('Email cliente', d.clienteEmail)}
+${line('Tel. cliente', d.clienteTelefono)}
+${line('Indirizzo attività', d.indirizzo)}
+${line('Tel. attività', d.telefono)}
+${line('Email sul sito', d.emailContatto)}
 ${line('Orari di apertura', d.orariApertura)}
 ${line('Google Maps', d.googleMaps)}
 ${line('Social media', d.socialMedia)}
@@ -386,6 +399,6 @@ ${line('Per chi si fa', d.perChiSiFa)}
 
 ${'═'.repeat(50)}
 Richiesta inviata il ${d.dataInvio || ''}
-Rispondi a: ${d.emailContatto || 'non specificato'}
+Rispondi a: ${d.clienteEmail || d.emailContatto || 'non specificato'}
 `;
 }

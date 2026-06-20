@@ -33,6 +33,9 @@ const formData = {
   percorsoUtente: '',
   kpiSuccesso: '',
   // Step 3
+  clienteNome: '',
+  clienteEmail: '',
+  clienteTelefono: '',
   indirizzo: '',
   telefono: '',
   emailContatto: '',
@@ -211,25 +214,31 @@ function restoreStep2() {
 }
 
 function saveStep3() {
-  formData.indirizzo     = getVal('indirizzo');
-  formData.telefono      = getVal('telefono');
-  formData.emailContatto = getVal('email-contatto');
-  formData.orariApertura = getVal('orari-apertura');
-  formData.googleMaps    = getVal('google-maps');
-  formData.socialMedia   = getVal('social-media');
-  formData.pIva          = getVal('p-iva');
+  formData.clienteNome    = getVal('cliente-nome');
+  formData.clienteEmail   = getVal('cliente-email');
+  formData.clienteTelefono = getVal('cliente-telefono');
+  formData.indirizzo      = getVal('indirizzo');
+  formData.telefono       = getVal('telefono');
+  formData.emailContatto  = getVal('email-contatto');
+  formData.orariApertura  = getVal('orari-apertura');
+  formData.googleMaps     = getVal('google-maps');
+  formData.socialMedia    = getVal('social-media');
+  formData.pIva           = getVal('p-iva');
   formData.certificazioni = getVal('certificazioni');
 }
 
 function restoreStep3() {
-  setVal('indirizzo',      formData.indirizzo);
-  setVal('telefono',       formData.telefono);
-  setVal('email-contatto', formData.emailContatto);
-  setVal('orari-apertura', formData.orariApertura);
-  setVal('google-maps',    formData.googleMaps);
-  setVal('social-media',   formData.socialMedia);
-  setVal('p-iva',          formData.pIva);
-  setVal('certificazioni', formData.certificazioni);
+  setVal('cliente-nome',     formData.clienteNome);
+  setVal('cliente-email',    formData.clienteEmail);
+  setVal('cliente-telefono', formData.clienteTelefono);
+  setVal('indirizzo',        formData.indirizzo);
+  setVal('telefono',         formData.telefono);
+  setVal('email-contatto',   formData.emailContatto);
+  setVal('orari-apertura',   formData.orariApertura);
+  setVal('google-maps',      formData.googleMaps);
+  setVal('social-media',     formData.socialMedia);
+  setVal('p-iva',            formData.pIva);
+  setVal('certificazioni',   formData.certificazioni);
 }
 
 function saveStep4() {
@@ -399,11 +408,25 @@ function validateStep(step) {
   }
 
   if (step === 3) {
-    const email = getVal('email-contatto');
-    const emailOk = email && validateEmail(email);
-    setError('email-contatto', !emailOk);
-    if (!emailOk) valid = false;
+    // Email personale del cliente — obbligatoria (per rispondergli)
+    const clienteEmail = getVal('cliente-email');
+    const clienteEmailOk = clienteEmail && validateEmail(clienteEmail);
+    setError('cliente-email', !clienteEmailOk);
+    if (!clienteEmailOk) valid = false;
 
+    // Telefono personale del cliente — opzionale, ma se inserito deve essere valido
+    const clienteTel = getVal('cliente-telefono');
+    const clienteTelOk = validateTel(clienteTel);
+    setError('cliente-telefono', !clienteTelOk);
+    if (!clienteTelOk) valid = false;
+
+    // Email del sito — opzionale, ma se inserita deve essere valida
+    const emailSito = getVal('email-contatto');
+    const emailSitoOk = !emailSito || validateEmail(emailSito);
+    setError('email-contatto', !emailSitoOk);
+    if (!emailSitoOk) valid = false;
+
+    // Telefono dell'attività — opzionale, ma se inserito deve essere valido
     const tel = getVal('telefono');
     const telOk = validateTel(tel);
     setError('telefono', !telOk);
@@ -643,9 +666,12 @@ function generateSummary() {
       ['KPI di successo',      val(formData.kpiSuccesso)],
     ]),
     buildSection(3, STEP_TITLES[3], [
-      ['Indirizzo',            val(formData.indirizzo)],
-      ['Telefono / WhatsApp',  val(formData.telefono)],
-      ['Email di contatto',    val(formData.emailContatto)],
+      ['Il tuo nome',          val(formData.clienteNome)],
+      ['La tua email',         val(formData.clienteEmail)],
+      ['Il tuo telefono',      val(formData.clienteTelefono)],
+      ['Indirizzo attività',   val(formData.indirizzo)],
+      ['Tel. attività',        val(formData.telefono)],
+      ['Email sul sito',       val(formData.emailContatto)],
       ['Orari di apertura',    val(formData.orariApertura)],
       ['Google Maps',          val(formData.googleMaps)],
       ['Social media',         val(formData.socialMedia)],
@@ -722,6 +748,9 @@ function buildNetlifyPayload() {
     'call-to-action':       formData.callToAction,
     'percorso-utente':      formData.percorsoUtente,
     'kpi-successo':         formData.kpiSuccesso,
+    'cliente-nome':         formData.clienteNome,
+    'cliente-email':        formData.clienteEmail,
+    'cliente-telefono':     formData.clienteTelefono,
     'indirizzo':            formData.indirizzo,
     'telefono':             formData.telefono,
     'email-contatto':       formData.emailContatto,

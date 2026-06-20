@@ -46,6 +46,9 @@
     <textarea name="percorso-utente"></textarea>
     <textarea name="kpi-successo"></textarea>
     <!-- Step 3 -->
+    <input name="cliente-nome">
+    <input name="cliente-email">
+    <input name="cliente-telefono">
     <textarea name="indirizzo"></textarea>
     <input name="telefono">
     <input name="email-contatto">
@@ -298,8 +301,39 @@
     <div class="step" id="step-3">
       <div class="step-header">
         <span class="step-num">03</span>
-        <h2>Dati di contatto e generali</h2>
-        <p class="step-desc">Le informazioni che appariranno sul sito e che i visitatori useranno per trovarti o contattarti.</p>
+        <h2>Dati di contatto</h2>
+        <p class="step-desc">Prima i tuoi contatti personali — così posso risponderti — poi le informazioni che appariranno sul sito.</p>
+      </div>
+
+      <!-- ─── Contatti personali del cliente ─── -->
+      <div class="form-group">
+        <label for="cliente-nome">Il tuo nome e cognome</label>
+        <span class="field-optional">Facoltativo</span>
+        <input type="text" id="cliente-nome" placeholder="Mario Rossi">
+      </div>
+
+      <div class="form-group">
+        <label for="cliente-email">La tua email <span class="required-star">*</span></label>
+        <input type="email" id="cliente-email"
+          placeholder="mario@email.it"
+          data-required="true"
+          data-validate="email">
+        <span class="field-hint">L'indirizzo a cui ti risponderò direttamente</span>
+        <span class="field-error" id="err-cliente-email">Inserisci un indirizzo email valido</span>
+      </div>
+
+      <div class="form-group">
+        <label for="cliente-telefono">Il tuo numero di telefono</label>
+        <span class="field-optional">Facoltativo</span>
+        <input type="tel" id="cliente-telefono"
+          placeholder="+39 333 1234567"
+          data-validate="tel">
+        <span class="field-error" id="err-cliente-telefono">Inserisci un numero di telefono valido</span>
+      </div>
+
+      <!-- Separatore tra contatti personali e dati sito -->
+      <div class="step-section-divider">
+        <span>Dati che appariranno sul sito</span>
       </div>
 
       <div class="form-group">
@@ -319,12 +353,12 @@
       </div>
 
       <div class="form-group">
-        <label for="email-contatto">Email di contatto <span class="required-star">*</span></label>
+        <label for="email-contatto">Email di contatto del sito</label>
+        <span class="field-optional">Facoltativo</span>
         <input type="email" id="email-contatto"
           placeholder="la-tua@email.it"
-          data-required="true"
           data-validate="email">
-        <span class="field-hint">L'email che i visitatori useranno per contattarti (apparirà sul sito)</span>
+        <span class="field-hint">L'email che i visitatori vedranno sul sito (può coincidere con la tua)</span>
         <span class="field-error" id="err-email-contatto">Inserisci un indirizzo email valido</span>
       </div>
 

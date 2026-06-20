@@ -567,6 +567,27 @@ select {
   box-shadow: 0 0 0 3px rgba(59,130,246,.25);
 }
 
+/* ---------- SECTION DIVIDER (separatore dentro lo step) ---------- */
+.step-section-divider {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  margin: 1.875rem 0 1.5rem;
+  color: var(--text-muted);
+  font-size: .7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.step-section-divider::before,
+.step-section-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
 /* ---------- CONDITIONAL FIELDS ---------- */
 .conditional {
   display: none;
