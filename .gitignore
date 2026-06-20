@@ -1,0 +1,11 @@
+# Claude Code settings (non committare)
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node (se si aggiunge un package.json in futuro)
+node_modules/
+.env
+.env.local

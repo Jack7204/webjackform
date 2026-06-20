@@ -417,7 +417,7 @@ function validateStep(step) {
 // 5. PROGRESS BAR
 // ============================================================
 function updateProgress() {
-  const pct = Math.round(((currentStep - 1) / TOTAL_STEPS) * 100);
+  const pct = Math.round((currentStep / TOTAL_STEPS) * 100);
   $('progressFill').style.width = `${pct}%`;
   $('progressPercent').textContent = `${pct}%`;
   $('currentStep').textContent = currentStep;
@@ -437,13 +437,10 @@ function showStep(step, direction) {
 
   // Bottoni navigazione
   $('btnBack').style.visibility = step === 1 ? 'hidden' : 'visible';
+  // Sull'ultimo step "Avanti" scompare — il submit è nel contenuto dello step
+  $('btnNext').hidden = step === TOTAL_STEPS;
   if (step === TOTAL_STEPS) {
-    $('btnNext').hidden   = true;
-    $('btnSubmit').hidden = false;
     generateSummary();
-  } else {
-    $('btnNext').hidden   = false;
-    $('btnSubmit').hidden = true;
   }
 
   currentStep = step;

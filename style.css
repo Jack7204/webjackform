@@ -181,15 +181,17 @@ body {
   border-radius: var(--radius);
   padding: 2rem 1.75rem;
   box-shadow: var(--shadow-md);
-  animation: stepIn .3s ease forwards;
 }
 
+/* L'animazione va su .active, non su .step, altrimenti non si
+   re-triggera quando si cambia step (il browser la considera già eseguita) */
 .step.active {
   display: block;
+  animation: stepIn .28s cubic-bezier(.2,.8,.4,1) forwards;
 }
 
 @keyframes stepIn {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -698,6 +700,40 @@ select {
   to { transform: rotate(360deg); }
 }
 
+/* ---------- SUBMIT SECTION (step 8, dopo il riepilogo) ---------- */
+.submit-section {
+  margin-top: 2.5rem;
+  padding: 1.75rem 2rem;
+  background: linear-gradient(135deg, #f0f7ff 0%, #eaf4fb 100%);
+  border: 1px solid #bfdbfe;
+  border-radius: var(--radius-sm);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.125rem;
+}
+
+.submit-hint {
+  font-size: .875rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.btn-submit-main {
+  min-width: 210px;
+  font-size: 1rem;
+  padding: .9rem 2rem;
+  justify-content: center;
+  border-radius: 10px;
+  box-shadow: 0 4px 18px rgba(16,185,129,.28);
+  letter-spacing: -.01em;
+}
+
+.btn-submit-main:hover {
+  box-shadow: 0 6px 24px rgba(16,185,129,.4);
+}
+
 /* ---------- SUCCESS / ERROR SCREENS ---------- */
 .step-outcome {
   text-align: center;
@@ -830,19 +866,26 @@ select {
 }
 
 @media (max-width: 380px) {
-  .btn-primary,
-  .btn-success {
+  /* Solo il bottone "Avanti" nella nav diventa full-width su schermi molto piccoli */
+  .wizard-nav .btn-primary {
     margin-left: 0;
-    width: 100%;
-    justify-content: center;
-  }
-
-  .btn-secondary {
     width: 100%;
     justify-content: center;
   }
 
   .wizard-nav {
     flex-direction: column-reverse;
+  }
+
+  /* Submit button nel contenuto step-8: full-width su mobile */
+  .btn-submit-main {
+    width: 100%;
+    min-width: unset;
+  }
+}
+
+@media (max-width: 640px) {
+  .submit-section {
+    padding: 1.375rem 1.25rem;
   }
 }
