@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Form di discovery per nuovi clienti — raccoglie le informazioni necessarie per costruire il tuo sito web.">
+  <title>Raccontami il tuo progetto</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ============================================================
+       FORM NASCOSTO PER NETLIFY FORMS (fallback garantito)
+       Netlify lo rileva durante il build e salva ogni submission
+       nel dashboard, anche se la Function email dovesse fallire.
+       Configurare la notifica email da:
+       Site settings → Forms → Form notifications → Email notification
+  ============================================================ -->
+  <form
+    name="discovery-form"
+    data-netlify="true"
+    netlify-honeypot="bot-field"
+    hidden
+    aria-hidden="true"
+  >
+    <input type="hidden" name="form-name" value="discovery-form">
+    <input name="bot-field">
+    <!-- Step 1 -->
+    <input name="tipo-attivita">
+    <input name="nome-attivita">
+    <input name="nicchia-specifica">
+    <input name="slogan-claim">
+    <input name="tono-di-voce">
+    <input name="tono-di-voce-altro">
+    <input name="lingue">
+    <input name="lingue-altro-text">
+    <!-- Step 2 -->
+    <input name="obiettivo-primario">
+    <input name="obiettivo-primario-altro">
+    <input name="obiettivi-secondari">
+    <input name="obiettivi-secondari-altro">
+    <input name="call-to-action">
+    <textarea name="percorso-utente"></textarea>
+    <textarea name="kpi-successo"></textarea>
+    <!-- Step 3 -->
+    <textarea name="indirizzo"></textarea>
+    <input name="telefono">
+    <input name="email-contatto">
+    <textarea name="orari-apertura"></textarea>
+    <input name="google-maps">
+    <textarea name="social-media"></textarea>
+    <input name="p-iva">
+    <textarea name="certificazioni"></textarea>
+    <!-- Step 4 -->
+    <input name="pagine-desiderate">
+    <input name="pagine-altro-text">
+    <textarea name="servizi-prodotti"></textarea>
+    <input name="testi-pronti">
+    <input name="materiale-fotografico">
+    <textarea name="recensioni"></textarea>
+    <textarea name="faq"></textarea>
+    <!-- Step 5 -->
+    <input name="funzionalita">
+    <input name="funz-altro-text">
+    <!-- Step 6 -->
+    <input name="logo-disponibile">
+    <input name="colori-brand">
+    <input name="font-preferiti">
+    <textarea name="siti-ispirazione"></textarea>
+    <textarea name="siti-concorrenti"></textarea>
+    <input name="stile-visivo">
+    <input name="stile-visivo-altro">
+    <!-- Step 7 -->
+    <input name="area-geografica">
+    <textarea name="parole-chiave"></textarea>
+    <textarea name="concorrenti-online"></textarea>
+    <input name="sito-esistente">
+    <input name="sito-esistente-url">
+    <input name="google-business">
+    <!-- Step 8 -->
+    <input name="dominio">
+    <input name="dominio-nome">
+    <input name="budget">
+    <textarea name="note-privacy"></textarea>
+    <textarea name="per-chi-si-fa"></textarea>
+    <input name="data-invio">
+  </form>
+
+  <!-- ============================================================
+       HONEYPOT anti-bot (visibile solo ai bot, non agli utenti)
+  ============================================================ -->
+  <div class="bot-trap" aria-hidden="true">
+    <label>Non compilare: <input type="text" id="botField" name="bot-field" tabindex="-1" autocomplete="off"></label>
+  </div>
+
+  <!-- ============================================================
+       HEADER
+  ============================================================ -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-logo">JM</div>
+      <div class="header-text">
+        <h1>Raccontami il tuo progetto</h1>
+        <p>Compila questo form per aiutarmi a capire le tue esigenze e costruire qualcosa che funziona davvero.</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       WIZARD CONTAINER
+  ============================================================ -->
+  <main class="wizard-container" id="wizardTop">
+
+    <!-- BARRA DI PROGRESSO -->
+    <div class="progress-wrapper">
+      <div class="progress-info">
+        <span class="progress-step-label">Step <span id="currentStep">1</span> di 8</span>
+        <span class="progress-step-title" id="stepTitle">Identità del progetto</span>
+        <span class="progress-percent" id="progressPercent">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         STEP 1 — Identità del progetto
+    ============================================================ -->
+    <div class="step active" id="step-1">
+      <div class="step-header">
+        <span class="step-num">01</span>
+        <h2>Identità del progetto</h2>
+        <p class="step-desc">Iniziamo dalle basi: chi sei e che tipo di attività vuoi presentare online?</p>
+      </div>
+
+      <div class="form-group">
+        <label for="tipo-attivita">Tipo di attività</label>
+        <span class="field-optional">Facoltativo</span>
+        <input type="text" id="tipo-attivita"
+          placeholder="es. bar, pizzeria, casa vacanza, studio professionale, e-commerce, palestra…">
+        <span class="field-hint">Descrivi brevemente il settore in cui operi</span>
+      </div>
+
+      <div class="form-group">
+        <label for="nome-attivita">Nome attività / brand <span class="required-star">*</span></label>
+        <input type="text" id="nome-attivita"
+          placeholder="Il nome con cui vuoi presentarti online"
+          data-required="true">
+        <span class="field-error" id="err-nome-attivita">Il nome dell'attività è obbligatorio</span>
+      </div>
+
+      <div class="form-group">
+        <label for="nicchia-specifica">Nicchia specifica</label>
+        <span class="field-optional">Facoltativo</span>
+        <input type="text" id="nicchia-specifica"
+          placeholder="es. pizzeria napoletana doc, casa vacanza per famiglie, yoga prenatale">
+        <span class="field-hint">Cosa ti distingue all'interno del tuo settore?</span>
+      </div>
+
+      <div class="form-group">
+        <label for="slogan-claim">Slogan / claim</label>
+        <span class="field-optional">Facoltativo</span>
+        <input type="text" id="slogan-claim"
+          placeholder="Il tuo motto o tagline, se ne hai uno">
+      </div>
+
+      <div class="form-group">
+        <label for="tono-di-voce">Tono di voce desiderato</label>
+        <span class="field-optional">Facoltativo</span>
+        <select id="tono-di-voce">
+          <option value="">— Seleziona un tono —</option>
+          <option value="Elegante e minimal">Elegante e minimal</option>
+          <option value="Caldo e familiare">Caldo e familiare</option>
+          <option value="Giovane e dinamico">Giovane e dinamico</option>
+          <option value="Lussuoso">Lussuoso</option>
+          <option value="Corporate e professionale">Corporate e professionale</option>
+          <option value="altro">Altro (specificare sotto)</option>
+        </select>
+        <div class="conditional" id="cond-tono-altro">
+          <input type="text" id="tono-di-voce-altro"
+            placeholder="Descrivi il tono di voce che hai in mente">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Lingua/e del sito</label>
+        <span class="field-optional">Facoltativo</span>
+        <div class="checkbox-group">
+          <label class="check-label">
+            <input type="checkbox" id="lingua-italiano">
+            <span class="check-box"></span>
+            <span>Italiano</span>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="lingua-inglese">
+            <span class="check-box"></span>
+            <span>Inglese</span>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="lingua-altro">
+            <span class="check-box"></span>
+            <span>Altro (specificare)</span>
+          </label>
+        </div>
+        <div class="conditional" id="cond-lingua-altro">
+          <input type="text" id="lingua-altro-text"
+            placeholder="es. Tedesco, Francese, Spagnolo…">
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         STEP 2 — Obiettivo e conversioni
+    ============================================================ -->
+    <div class="step" id="step-2">
+      <div class="step-header">
+        <span class="step-num">02</span>
+        <h2>Obiettivo e conversioni</h2>
+        <p class="step-desc">Cosa deve far fare il sito ai tuoi visitatori? Definire l'obiettivo è fondamentale per costruire qualcosa che converte.</p>
+      </div>
+
+      <div class="form-group">
+        <label for="obiettivo-primario">Obiettivo primario <span class="required-star">*</span></label>
+        <select id="obiettivo-primario" data-required="true">
+          <option value="">— Seleziona l'obiettivo principale —</option>
+          <option value="Prenotazioni dirette">Prenotazioni dirette</option>
+          <option value="Chiamate telefoniche">Chiamate telefoniche</option>
+          <option value="Richieste preventivo">Richieste preventivo</option>
+          <option value="Vendite online">Vendite online</option>
+          <option value="Raccolta contatti / lead">Raccolta contatti / lead</option>
+          <option value="altro">Altro (specificare sotto)</option>
+        </select>
+        <div class="conditional" id="cond-obiettivo-altro">
+          <input type="text" id="obiettivo-primario-altro"
+            placeholder="Descrivi il tuo obiettivo principale">
+        </div>
+        <span class="field-error" id="err-obiettivo-primario">L'obiettivo primario è obbligatorio</span>
+      </div>
+
+      <div class="form-group">
+        <label>Obiettivi secondari</label>
+        <span class="field-optional">Facoltativo — puoi selezionarne più di uno</span>
+        <div class="checkbox-group">
+          <label class="check-label">
+            <input type="checkbox" id="ob-sec-newsletter">
+            <span class="check-box"></span>
+            <span>Iscrizione newsletter</span>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="ob-sec-recensioni">
+            <span class="check-box"></span>
+            <span>Recensioni Google</span>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="ob-sec-social">
+            <span class="check-box"></span>
+            <span>Follow sui social</span>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="ob-sec-altro">
+            <span class="check-box"></span>
+            <span>Altro (specificare)</span>
+          </label>
+        </div>
+        <div class="conditional" id="cond-ob-sec-altro">
+          <input type="text" id="ob-sec-altro-text"
+            placeholder="Descrivi gli altri obiettivi secondari">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="call-to-action">Testo della call-to-action principale</label>
+        <span class="field-optional">Facoltativo</span>
+        <input type="text" id="call-to-action"
+          placeholder='es. "Prenota ora", "Richiedi un preventivo gratuito", "Chiamaci"'>
+        <span class="field-hint">Il testo esatto del pulsante o link principale che vuoi mostrare ai visitatori</span>
+      </div>
+
+      <div class="form-group">
+        <label for="percorso-utente">Percorso utente ideale</label>
+        <span class="field-optional">Facoltativo</span>
+        <textarea id="percorso-utente" rows="4"
+          placeholder="Cosa vuoi che l'utente faccia da quando atterra sul sito fino alla conversione? es. Vede la homepage → guarda la galleria → legge le recensioni → clicca su Prenota"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="kpi-successo">KPI di successo</label>
+        <span class="field-optional">Facoltativo</span>
+        <textarea id="kpi-successo" rows="3"
+          placeholder="Come misureresti il successo del sito? es. 10 richieste preventivo al mese, riduzione chiamate per info base, aumento prenotazioni dirette del 20%…"></textarea>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         STEP 3 — Dati di contatto e generali
+    ============================================================ -->
+    <div class="step" id="step-3">
+      <div class="step-header">
+        <span class="step-num">03</span>
+        <h2>Dati di contatto e generali</h2>
+        <p class="step-desc">Le informazioni che appariranno sul sito e che i visitatori useranno per trovarti o contattarti.</p>
+      </div>
+
+      <div class="form-group">
+        <label for="indirizzo">Indirizzo completo</label>
+        <span class="field-optional">Facoltativo</span>
+        <textarea id="indirizzo" rows="3"
+          placeholder="Via, numero civico, città, CAP, provincia&#10;es. Via Roma 12, Napoli, 80100, NA"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="telefono">Telefono / WhatsApp</label>
+        <span class="field-optional">Facoltativo</span>
+        <input type="tel" id="telefono"
+          placeholder="+39 333 1234567"
+          data-validate="tel">
+        <span class="field-error" id="err-telefono">Inserisci un numero di telefono valido</span>
+      </div>
+
+      <div class="form-group">
+        <label for="email-contatto">Email di contatto <span class="required-star">*</span></label>
+        <input type="email" id="email-contatto"
+          placeholder="la-tua@email.it"
+          data-required="true"
+          data-validate="email">
+        <span class="field-hint">L'email che i visitatori useranno per contattarti (apparirà sul sito)</span>
+        <span class="field-error" id="err-email-contatto">Inserisci un indirizzo email valido</span>
+      </div>
+
+      <div class="form-group">
+        <label for="orari-apertura">Orari di apertura</label>
+        <span class="field-optional">Facoltativo</span>
+        <textarea id="orari-apertura" rows="3"
+          placeholder="Lun-Ven: 9:00 - 18:00&#10;Sab: 10:00 - 13:00&#10;Dom: chiuso"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="google-maps">Link Google Maps o coordinate</label>
+        <span class="field-optional">Facoltativo</span>
+        <input type="text" id="google-maps"
+          placeholder="https://maps.app.goo.gl/... oppure 40.8518° N, 14.2681° E">
+        <span class="field-hint">Serve per integrare la mappa interattiva nel sito</span>
+      </div>
+
+      <div class="form-group">
+        <label for="social-media">Profili social media</label>
+        <span class="field-optional">Facoltativo</span>
+        <textarea id="social-media" rows="4"
+          placeholder="Instagram: @nomeprofilo&#10;Facebook: https://facebook.com/...&#10;TikTok: @nomeprofilo&#10;LinkedIn: https://linkedin.com/in/...&#10;Altro: ..."></textarea>
+        <span class="field-hint">Incolla i link completi o il nome del profilo per ogni piattaforma</span>
+      </div>
+
+      <div class="form-group">
+        <label for="p-iva">P.IVA / Ragione sociale</label>
+        <span class="field-optional">Facoltativo</span>
+        <input type="text" id="p-iva"
+          placeholder="es. Studio XYZ S.r.l. — P.IVA 12345678901">
+        <span class="field-hint">Necessario per il footer e la sezione legale del sito</span>
+      </div>
+
+      <div class="form-group">
+        <label for="certificazioni">Certificazioni / premi / riconoscimenti</label>
+        <span class="field-optional">Facoltativo</span>
+        <textarea id="certificazioni" rows="3"
+          placeholder="es. Certificato Verace Pizza Napoletana, Premio Miglior B&B 2023, Membro CONI…"></textarea>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         STEP 4 — Contenuti e struttura del sito
+    ============================================================ -->
+    <div class="step" id="step-4">
+      <div class="step-header">
+        <span class="step-num">04</span>
+        <h2>Contenuti e struttura del sito</h2>
+        <p class="step-desc">Definiamo insieme la struttura del sito e i contenuti che dovrà ospitare.</p>
+      </div>
+
+      <div class="form-group">
+        <label>Pagine desiderate</label>
+        <span class="field-optional">Facoltativo — seleziona tutte quelle che ti servono</span>
+        <div class="checkbox-group checkbox-grid">
+          <label class="check-label">
+            <input type="checkbox" id="pag-home">
+            <span class="check-box"></span>
+            <span>Home</span>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="pag-chi-siamo">
+            <span class="check-box"></span>
+            <span>Chi siamo</span>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="pag-menu-servizi">
+            <span class="check-box"></span>
+            <span>Menu / Servizi</span>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="pag-galleria">
+            <span class="check-box"></span>
+            <span>Galleria</span>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="pag-camere">
+            <span class="check-box"></span>
+            <span>Camere / Stanze</span>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="pag-prezzi">
+            <span class="check-box"></span>
+            <span>Prezzi</span>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="pag-blog">
+            <span class="check-box"></span>
+            <span>Blog / News</span>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="pag-contatti">
+            <span class="check-box"></span>
+            <span>Contatti</span>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="pag-altro">
+            <span class="check-box"></span>
+            <span>Altro (specificare)</span>
+          </label>
+        </div>
+        <div class="conditional" id="cond-pag-altro">
+          <input type="text" id="pag-altro-text"
+            placeholder="Quali altre pagine vorresti?">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="servizi-prodotti">Servizi / prodotti da elencare</label>
+        <span class="field-optional">Facoltativo</span>
+        <textarea id="servizi-prodotti" rows="6"
+          placeholder="Elenca i tuoi servizi o prodotti principali con nome, breve descrizione e prezzo (se vuoi mostrarlo)&#10;&#10;es.&#10;Taglio capelli uomo — 20€&#10;Colorazione completa — da 60€&#10;Trattamento cheratina — 80€"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Hai già i testi pronti?</label>
+        <span class="field-optional">Facoltativo</span>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" name="testi-pronti" value="Sì, li allegherò via email" id="testi-si">
+            <span class="radio-dot"></span>
+            <span>Sì, li allegherò via email</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="testi-pronti" value="No, da scrivere ex-novo" id="testi-no">
+            <span class="radio-dot"></span>
+            <span>No, da scrivere ex-novo</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="testi-pronti" value="Parzialmente" id="testi-parz">
+            <span class="radio-dot"></span>
+            <span>Parzialmente (ho alcune bozze)</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Materiale fotografico disponibile?</label>
+        <span class="field-optional">Facoltativo</span>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" name="materiale-foto" value="Disponibile e di buona qualità" id="foto-ok">
+            <span class="radio-dot"></span>
+            <span>Disponibile e di buona qualità</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="materiale-foto" value="Servono foto temporanee/stock" id="foto-stock">
+            <span class="radio-dot"></span>
+            <span>Servono foto temporanee / stock</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="materiale-foto" value="Serve organizzare uno shooting" id="foto-shooting">
+            <span class="radio-dot"></span>
+            <span>Serve organizzare uno shooting fotografico</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="recensioni">Recensioni / testimonianze esistenti</label>
+        <span class="field-optional">Facoltativo</span>
+        <textarea id="recensioni" rows="4"
+          placeholder="Incolla qui le recensioni o testimonianze reali che vuoi mostrare sul sito. Anche copiandole da Google, TripAdvisor, ecc."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="faq">Domande frequenti dei clienti</label>
+        <span class="field-optional">Facoltativo</span>
+        <textarea id="faq" rows="4"
+          placeholder="Cosa ti chiedono più spesso i clienti? es.&#10;— Accettate prenotazioni last-minute?&#10;— C'è parcheggio nelle vicinanze?&#10;— Avete opzioni vegane?"></textarea>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         STEP 5 — Funzionalità richieste
+    ============================================================ -->
+    <div class="step" id="step-5">
+      <div class="step-header">
+        <span class="step-num">05</span>
+        <h2>Funzionalità richieste</h2>
+        <p class="step-desc">Scegli solo le funzionalità che ti servono davvero — aggiungere troppo spesso complica l'esperienza dell'utente e aumenta i costi.</p>
+      </div>
+
+      <div class="form-group">
+        <label>Funzionalità necessarie</label>
+        <span class="field-optional">Facoltativo — seleziona solo ciò che ti serve davvero</span>
+        <div class="checkbox-group">
+          <label class="check-label">
+            <input type="checkbox" id="funz-vetrina">
+            <span class="check-box"></span>
+            <span>Sito vetrina con form di contatto semplice</span>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="funz-blog">
+            <span class="check-box"></span>
+            <span>Blog / news aggiornabile</span>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="funz-booking">
+            <span class="check-box"></span>
+            <span>Sistema di prenotazione / booking</span>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="funz-ecommerce">
+            <span class="check-box"></span>
+            <span>E-commerce / vendita online</span>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="funz-galleria">
+            <span class="check-box"></span>
+            <span>Galleria immagini / portfolio dinamica</span>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="funz-mappa">
+            <span class="check-box"></span>
+            <span>Mappa interattiva</span>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="funz-whatsapp">
+            <span class="check-box"></span>
+            <span>Integrazione WhatsApp Business / chat</span>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="funz-newsletter">
+            <span class="check-box"></span>
+            <span>Newsletter</span>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="funz-multilingua">
+            <span class="check-box"></span>
+            <span>Area multilingua</span>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="funz-altro">
+            <span class="check-box"></span>
+            <span>Altro (specificare)</span>
+          </label>
+        </div>
+        <div class="conditional" id="cond-funz-altro">
+          <input type="text" id="funz-altro-text"
+            placeholder="Descrivi le funzionalità aggiuntive di cui hai bisogno">
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         STEP 6 — Riferimenti estetici e brand
+    ============================================================ -->
+    <div class="step" id="step-6">
+      <div class="step-header">
+        <span class="step-num">06</span>
+        <h2>Riferimenti estetici e brand</h2>
+        <p class="step-desc">Aiutami a capire la tua identità visiva: colori, stile e siti che ti ispirano valgono più di mille parole.</p>
+      </div>
+
+      <div class="form-group">
+        <label>Hai già un logo?</label>
+        <span class="field-optional">Facoltativo</span>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" name="logo-disponibile" value="Sì, in alta risoluzione" id="logo-si">
+            <span class="radio-dot"></span>
+            <span>Sì, in alta risoluzione (PNG o SVG)</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="logo-disponibile" value="No, da creare" id="logo-no">
+            <span class="radio-dot"></span>
+            <span>No, è da creare</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="colori-brand">Colori brand</label>
+        <span class="field-optional">Facoltativo</span>
+        <input type="text" id="colori-brand"
+          placeholder="es. #1A2744 (blu navy) + #C9A84C (oro) — oppure: verde salvia e beige caldo">
+        <span class="field-hint">Codici HEX se li conosci, altrimenti una descrizione va benissimo</span>
+      </div>
+
+      <div class="form-group">
+        <label for="font-preferiti">Font preferiti</label>
+        <span class="field-optional">Facoltativo</span>
+        <input type="text" id="font-preferiti"
+          placeholder="es. Playfair Display + Inter, oppure: qualcosa di moderno e leggibile">
+        <span class="field-hint">Solo se hai già una brand identity definita</span>
+      </div>
+
+      <div class="form-group">
+        <label for="siti-ispirazione">Siti di ispirazione</label>
+        <span class="field-optional">Facoltativo — 2 o 3 esempi ideali</span>
+        <textarea id="siti-ispirazione" rows="3"
+          placeholder="Incolla i link a siti web (anche di concorrenti) che ti piacciono esteticamente, e scrivi brevemente cosa ti piace di ciascuno"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="siti-concorrenti">Siti dei concorrenti diretti</label>
+        <span class="field-optional">Facoltativo</span>
+        <textarea id="siti-concorrenti" rows="3"
+          placeholder="Link ai siti dei tuoi principali concorrenti — utile per differenziarsi e capire il panorama"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="stile-visivo">Stile visivo desiderato</label>
+        <span class="field-optional">Facoltativo</span>
+        <select id="stile-visivo">
+          <option value="">— Seleziona uno stile —</option>
+          <option value="Minimal / elegante">Minimal / elegante</option>
+          <option value="Lussuoso / dark mode">Lussuoso / dark mode</option>
+          <option value="Naturale / organico">Naturale / organico</option>
+          <option value="Vivace / colorato">Vivace / colorato</option>
+          <option value="Corporate / professionale">Corporate / professionale</option>
+          <option value="altro">Altro (specificare sotto)</option>
+        </select>
+        <div class="conditional" id="cond-stile-altro">
+          <input type="text" id="stile-visivo-altro"
+            placeholder="Descrivi lo stile che hai in mente">
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         STEP 7 — SEO e posizionamento
+    ============================================================ -->
+    <div class="step" id="step-7">
+      <div class="step-header">
+        <span class="step-num">07</span>
+        <h2>SEO e posizionamento</h2>
+        <p class="step-desc">Queste informazioni permettono di ottimizzare il sito per i motori di ricerca fin dall'inizio, non come intervento successivo.</p>
+      </div>
+
+      <div class="form-group">
+        <label for="area-geografica">Area geografica target</label>
+        <span class="field-optional">Facoltativo</span>
+        <input type="text" id="area-geografica"
+          placeholder="es. Roma e provincia, tutta la Toscana, mercato nazionale, clientela europea">
+        <span class="field-hint">Dove si trovano i tuoi clienti ideali?</span>
+      </div>
+
+      <div class="form-group">
+        <label for="parole-chiave">Parole chiave principali (3-5)</label>
+        <span class="field-optional">Facoltativo</span>
+        <textarea id="parole-chiave" rows="3"
+          placeholder="Cosa cercheresti su Google per trovare un'attività come la tua?&#10;es. pizzeria napoli centro, pizza napoletana vera, ristorante pizza fritta napoli"></textarea>
+        <span class="field-hint">Pensa come farebbe un cliente che non ti conosce ancora</span>
+      </div>
+
+      <div class="form-group">
+        <label for="concorrenti-online">Concorrenti diretti online</label>
+        <span class="field-optional">Facoltativo</span>
+        <textarea id="concorrenti-online" rows="3"
+          placeholder="Nomi o link ai siti dei principali concorrenti che si posizionano bene su Google per le stesse ricerche"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Esiste già un sito da migrare?</label>
+        <span class="field-optional">Facoltativo</span>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" name="sito-esistente" value="Sì" id="sito-si">
+            <span class="radio-dot"></span>
+            <span>Sì, c'è un sito esistente</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="sito-esistente" value="No" id="sito-no">
+            <span class="radio-dot"></span>
+            <span>No, è un sito nuovo</span>
+          </label>
+        </div>
+        <div class="conditional" id="cond-sito-url">
+          <input type="text" id="sito-esistente-url"
+            placeholder="https://www.sitoattuale.it">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Google Business Profile già attivo?</label>
+        <span class="field-optional">Facoltativo</span>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" name="google-business" value="Sì" id="gbp-si">
+            <span class="radio-dot"></span>
+            <span>Sì, già attivo e verificato</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="google-business" value="No" id="gbp-no">
+            <span class="radio-dot"></span>
+            <span>No</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="google-business" value="Non so" id="gbp-non-so">
+            <span class="radio-dot"></span>
+            <span>Non so / non sono sicuro</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         STEP 8 — Vincoli tecnici e legali + RIEPILOGO
+    ============================================================ -->
+    <div class="step" id="step-8">
+      <div class="step-header">
+        <span class="step-num">08</span>
+        <h2>Vincoli e riepilogo finale</h2>
+        <p class="step-desc">Ultime informazioni tecniche e di contesto, poi potrai rivedere tutto prima di inviare.</p>
+      </div>
+
+      <div class="form-group">
+        <label>Dominio</label>
+        <span class="field-optional">Facoltativo</span>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" name="dominio" value="Già posseduto" id="dom-si">
+            <span class="radio-dot"></span>
+            <span>Già posseduto</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="dominio" value="Da acquistare" id="dom-acquistare">
+            <span class="radio-dot"></span>
+            <span>Da acquistare (scelgo io o lo decidiamo insieme)</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="dominio" value="Va bene un sottodominio gratuito Netlify" id="dom-netlify">
+            <span class="radio-dot"></span>
+            <span>Va bene un sottodominio gratuito Netlify (.netlify.app)</span>
+          </label>
+        </div>
+        <div class="conditional" id="cond-dominio-nome">
+          <input type="text" id="dominio-nome"
+            placeholder="es. www.miasattivita.it">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Budget disponibile per servizi / hosting a pagamento</label>
+        <span class="field-optional">Facoltativo</span>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" name="budget" value="Solo soluzioni gratuite" id="budget-gratis">
+            <span class="radio-dot"></span>
+            <span>Solo soluzioni gratuite</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="budget" value="Piccola disponibilità mensile per funzionalità avanzate" id="budget-piccolo">
+            <span class="radio-dot"></span>
+            <span>Piccola disponibilità mensile per funzionalità avanzate</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="note-privacy">Note su privacy e raccolta dati personali</label>
+        <span class="field-optional">Facoltativo</span>
+        <textarea id="note-privacy" rows="3"
+          placeholder="Il sito raccoglierà dati personali degli utenti (es. via form di contatto, newsletter, cookie di profilazione)? Hai già una privacy policy? Serve consulenza GDPR?"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="per-chi-si-fa">Questo sito è per te o per un cliente esterno?</label>
+        <span class="field-optional">Facoltativo</span>
+        <textarea id="per-chi-si-fa" rows="2"
+          placeholder="Per me stesso / per la mia attività — oppure: lo sto sviluppando per conto di [nome cliente / attività]"></textarea>
+      </div>
+
+      <!-- =========================================================
+           RIEPILOGO FINALE (generato dinamicamente da script.js)
+      ========================================================== -->
+      <div class="summary-wrapper" id="summaryWrapper">
+        <div class="summary-header">
+          <h3>Riepilogo della tua richiesta</h3>
+          <p>Controlla le tue risposte prima di inviare. Usa il pulsante "Modifica" per tornare a qualsiasi sezione.</p>
+        </div>
+        <div class="summary-sections" id="summarySections">
+          <!-- Populated by generateSummary() in script.js -->
+        </div>
+      </div>
+
+    </div><!-- /step-8 -->
+
+    <!-- ============================================================
+         SCHERMATA DI SUCCESSO
+    ============================================================ -->
+    <div class="step step-outcome" id="step-success">
+      <div class="outcome-icon outcome-icon--success">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 6L9 17l-5-5"/>
+        </svg>
+      </div>
+      <h2>Richiesta inviata con successo!</h2>
+      <p>Ho ricevuto tutte le informazioni e ti ricontatterò al più presto per discutere il tuo progetto.</p>
+      <p class="outcome-detail">Se non ricevi risposta entro 48 ore, puoi scrivermi direttamente a <strong>jacopomolle.consulenza@gmail.com</strong></p>
+      <button class="btn btn-secondary" id="btnNuovo">Compila un'altra richiesta</button>
+    </div>
+
+    <!-- ============================================================
+         SCHERMATA DI ERRORE
+    ============================================================ -->
+    <div class="step step-outcome" id="step-error">
+      <div class="outcome-icon outcome-icon--error">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+      <h2>Errore nell'invio</h2>
+      <p>C'è stato un problema nell'inviare la richiesta. I tuoi dati sono ancora presenti — premi "Riprova" per tentare di nuovo.</p>
+      <p class="outcome-detail error-detail" id="errorDetail"></p>
+      <div class="outcome-actions">
+        <button class="btn btn-primary" id="btnRetry">Riprova</button>
+        <button class="btn btn-secondary" id="btnRetryManual">Torna al riepilogo</button>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         NAVIGAZIONE WIZARD
+    ============================================================ -->
+    <div class="wizard-nav" id="wizardNav">
+      <button class="btn btn-secondary" id="btnBack" style="visibility:hidden">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Indietro
+      </button>
+      <button class="btn btn-primary" id="btnNext">
+        Avanti
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </button>
+      <button class="btn btn-success" id="btnSubmit" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="22" y1="2" x2="11" y2="13"/>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+        Invia richiesta
+      </button>
+    </div>
+
+  </main><!-- /wizard-container -->
+
+  <footer class="site-footer">
+    <p>I tuoi dati sono trattati nel rispetto del GDPR e utilizzati esclusivamente per darti una risposta a questa richiesta.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
