@@ -130,69 +130,11 @@ exports.handler = async (event) => {
 };
 
 // ============================================================
-// HELPER — valore leggibile (vuoto → "Non specificato")
-// ============================================================
-function display(v) {
-  if (v === null || v === undefined || v === '' || v === false) return 'Non specificato';
-  if (v === true) return 'Sì';
-  return String(v).trim() || 'Non specificato';
-}
-
-// ============================================================
-// TEMPLATE EMAIL — versione HTML (bella e leggibile)
+// TEMPLATE EMAIL — versione HTML
 // ============================================================
 function buildEmailHtml(d) {
-  const tonoDiVoce = d.tonoDiVoce || 'Non specificato';
-  const obPrimario = d.obiettivoPrimario || 'Non specificato';
-  const stile      = d.stileVisivo || 'Non specificato';
-  const dominio    = d.dominio
-    ? d.dominio + (d.dominioNome ? ` (${d.dominioNome})` : '')
-    : 'Non specificato';
-  const sitoEs     = d.sitoEsistente
-    ? d.sitoEsistente + (d.sitoEsistenteUrl ? ` — ${d.sitoEsistenteUrl}` : '')
-    : 'Non specificato';
 
-  // Stile inline per massima compatibilità email client
-  const CSS = {
-    wrapper: 'font-family: -apple-system, Arial, sans-serif; max-width: 680px; margin: 0 auto; background: #f0f4f8; padding: 24px 16px;',
-    card:    'background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08);',
-    header:  'background: #1a2744; color: #ffffff; padding: 32px 32px 28px; text-align: left;',
-    h1:      'margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: #ffffff;',
-    subtitle:'margin: 6px 0 0; font-size: 14px; color: rgba(255,255,255,0.7);',
-    body:    'padding: 8px 0;',
-    section: 'padding: 20px 32px; border-bottom: 1px solid #f0f4f8;',
-    secHead: 'display: flex; align-items: center; gap: 8px; margin-bottom: 14px;',
-    secNum:  'display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: #1a2744; color: white; font-size: 11px; font-weight: 700; text-align: center; line-height: 22px;',
-    secTitle:'font-size: 11px; font-weight: 700; color: #1a2744; text-transform: uppercase; letter-spacing: 0.08em; margin: 0;',
-    row:     'display: flex; gap: 8px; padding: 5px 0; border-bottom: 1px solid #f8f8f8; font-size: 13.5px; line-height: 1.5;',
-    key:     'color: #64748b; font-weight: 500; min-width: 170px; flex-shrink: 0;',
-    val:     'color: #1e293b; word-break: break-word;',
-    empty:   'color: #94a3b8; font-style: italic;',
-    footer:  'padding: 20px 32px; font-size: 12px; color: #94a3b8; text-align: center; background: #f8fafc;',
-    badge:   'display: inline-block; padding: 2px 8px; background: #eff6ff; color: #3b82f6; border-radius: 4px; font-size: 11px; font-weight: 600; margin-top: 4px;',
-  };
-
-  function row(key, value) {
-    const isEmpty = !value || value === 'Non specificato';
-    const valStyle = isEmpty ? CSS.empty : CSS.val;
-    return `
-      <div style="${CSS.row}">
-        <span style="${CSS.key}">${esc(key)}</span>
-        <span style="${valStyle}">${esc(value)}</span>
-      </div>`;
-  }
-
-  function section(num, title, rows) {
-    return `
-      <div style="${CSS.section}">
-        <div style="${CSS.secHead}">
-          <span style="${CSS.secNum}">${num}</span>
-          <p style="${CSS.secTitle}">${title}</p>
-        </div>
-        ${rows.join('')}
-      </div>`;
-  }
-
+  // Escape HTML per sicurezza, converte \n in <br>
   function esc(str) {
     return String(str || '')
       .replace(/&/g, '&amp;')
@@ -202,109 +144,140 @@ function buildEmailHtml(d) {
       .replace(/\n/g, '<br>');
   }
 
+  // Valore da mostrare: null/vuoto → null (mostralo come —)
+  function disp(v) {
+    if (v === null || v === undefined || v === false || String(v).trim() === '') return null;
+    return String(v).trim();
+  }
+
+  // Riga campo: "Label | Valore" — se vuoto mostra — in grigio
+  function row(label, value) {
+    const v = disp(value);
+    return `
+      <tr>
+        <td style="padding:5px 18px 5px 0;color:#64748b;font-size:13px;font-weight:500;vertical-align:top;white-space:nowrap;width:44%;line-height:1.5;">${esc(label)}</td>
+        <td style="padding:5px 0;${v ? 'color:#0f172a;' : 'color:#94a3b8;font-style:italic;'}font-size:13px;vertical-align:top;word-break:break-word;line-height:1.5;">${v ? esc(v) : '—'}</td>
+      </tr>`;
+  }
+
+  // Blocco sezione con header stile "## Titolo"
+  function section(title, rows) {
+    return `
+      <div style="padding:20px 32px;border-bottom:1px solid #f1f5f9;">
+        <h2 style="margin:0 0 13px;font-size:11px;font-weight:700;color:#3b82f6;text-transform:uppercase;letter-spacing:0.1em;padding-bottom:7px;border-bottom:1.5px solid #e2e8f0;">${esc(title)}</h2>
+        <table style="width:100%;border-collapse:collapse;"><tbody>${rows.join('')}</tbody></table>
+      </div>`;
+  }
+
+  // Valori compositi
+  const dominio = d.dominio
+    ? d.dominio + (d.dominioNome ? ` (${d.dominioNome})` : '')
+    : '';
+  const sitoEs = d.sitoEsistente
+    ? d.sitoEsistente + (d.sitoEsistenteUrl ? ` — ${d.sitoEsistenteUrl}` : '')
+    : '';
+
+  // Box contatti cliente (in header)
+  const hasClient = d.clienteNome || d.clienteEmail || d.clienteTelefono;
+  const clientBox = hasClient ? `
+    <div style="margin-top:14px;background:rgba(255,255,255,0.13);border-radius:8px;padding:11px 16px;font-size:13px;line-height:1.9;">
+      <span style="display:block;color:rgba(255,255,255,0.5);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;margin-bottom:3px;">Contatti cliente</span>
+      ${d.clienteNome     ? `<span style="color:#fff;margin-right:16px;">&#x1F464; ${esc(d.clienteNome)}</span>` : ''}
+      ${d.clienteEmail    ? `<a href="mailto:${esc(d.clienteEmail)}" style="color:#93c5fd;text-decoration:none;margin-right:16px;">&#x2709;&#xFE0F; ${esc(d.clienteEmail)}</a>` : ''}
+      ${d.clienteTelefono ? `<span style="color:#fff;">&#x1F4DE; ${esc(d.clienteTelefono)}</span>` : ''}
+    </div>` : '';
+
   return `<!DOCTYPE html>
 <html lang="it">
 <head><meta charset="UTF-8"><title>Nuova richiesta discovery</title></head>
-<body style="margin:0; padding:0; background:#f0f4f8;">
-<div style="${CSS.wrapper}">
-  <div style="${CSS.card}">
+<body style="margin:0;padding:0;background:#f1f5f9;font-family:-apple-system,Arial,sans-serif;">
+<div style="max-width:640px;margin:0 auto;padding:24px 16px;">
+<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
 
-    <!-- Header -->
-    <div style="${CSS.header}">
-      <h1 style="${CSS.h1}">Nuova richiesta discovery</h1>
-      <p style="${CSS.subtitle}">
-        Progetto: <strong>${esc(d.nomeAttivita || 'Non specificato')}</strong>
-        &nbsp;·&nbsp;
-        ${esc(d.dataInvio || new Date().toLocaleString('it-IT'))}
-      </p>
-      <div style="margin-top:14px; padding:12px 16px; background:rgba(255,255,255,0.1); border-radius:8px; font-size:13px; line-height:1.7;">
-        <strong style="color:rgba(255,255,255,0.6); font-size:10px; text-transform:uppercase; letter-spacing:0.08em;">Contatti cliente</strong><br>
-        ${d.clienteNome ? `<span style="color:#fff;">👤 ${esc(d.clienteNome)}</span><br>` : ''}
-        ${d.clienteEmail ? `<a href="mailto:${esc(d.clienteEmail)}" style="color:#93c5fd;">✉️ ${esc(d.clienteEmail)}</a><br>` : ''}
-        ${d.clienteTelefono ? `<span style="color:#fff;">📞 ${esc(d.clienteTelefono)}</span>` : ''}
-      </div>
-    </div>
+  <!-- Header -->
+  <div style="background:#1a2744;padding:26px 32px 22px;">
+    <h1 style="margin:0;font-size:19px;font-weight:700;letter-spacing:-0.02em;color:#fff;">Nuova richiesta discovery</h1>
+    <p style="margin:5px 0 0;font-size:13px;color:rgba(255,255,255,0.65);">
+      Progetto: <strong style="color:#fff;">${esc(d.nomeAttivita || '—')}</strong>
+      &nbsp;&middot;&nbsp;${esc(d.dataInvio || new Date().toLocaleString('it-IT'))}
+    </p>
+    ${clientBox}
+  </div>
 
-    <!-- Body -->
-    <div style="${CSS.body}">
+  <!-- Sezioni -->
+  ${section('Identit\u00e0', [
+    row('Tipo di attivit\u00e0',     d.tipoAttivita),
+    row('Nome attivit\u00e0/brand',  d.nomeAttivita),
+    row('Nicchia specifica',         d.nicchiaSpecifica),
+    row('Slogan/claim',              d.sloganClaim),
+    row('Tono di voce',              d.tonoDiVoce),
+    row('Lingua/e del sito',         d.lingue),
+  ])}
 
-      ${section(1, 'Identità del progetto', [
-        row('Tipo di attività',      display(d.tipoAttivita)),
-        row('Nome / brand',          display(d.nomeAttivita)),
-        row('Nicchia specifica',     display(d.nicchiaSpecifica)),
-        row('Slogan / claim',        display(d.sloganClaim)),
-        row('Tono di voce',          display(tonoDiVoce)),
-        row('Lingue del sito',       display(d.lingue)),
-      ])}
+  ${section('Obiettivo e conversione', [
+    row('Obiettivo primario',         d.obiettivoPrimario),
+    row('Obiettivi secondari',        d.obiettiviSecondari),
+    row('CTA principale (testo esatto)', d.callToAction),
+    row('Percorso utente ideale',     d.percorsoUtente),
+    row('KPI di successo',            d.kpiSuccesso),
+  ])}
 
-      ${section(2, 'Obiettivo e conversioni', [
-        row('Obiettivo primario',    display(obPrimario)),
-        row('Obiettivi secondari',   display(d.obiettiviSecondari)),
-        row('Call to action',        display(d.callToAction)),
-        row('Percorso utente',       display(d.percorsoUtente)),
-        row('KPI di successo',       display(d.kpiSuccesso)),
-      ])}
+  ${section('Dati di contatto', [
+    row('Indirizzo completo',         d.indirizzo),
+    row('Telefono/WhatsApp',          d.telefono),
+    row('Email',                      d.emailContatto),
+    row('Orari di apertura',          d.orariApertura),
+    row('Maps/coordinate GPS',        d.googleMaps),
+    row('Social media (link)',        d.socialMedia),
+    row('P.IVA/Ragione sociale',      d.pIva),
+    row('Certificazioni/premi',       d.certificazioni),
+  ])}
 
-      ${section(3, 'Dati di contatto', [
-        row('Nome cliente',          display(d.clienteNome)),
-        row('Email cliente',         display(d.clienteEmail)),
-        row('Tel. cliente',          display(d.clienteTelefono)),
-        row('Indirizzo attività',    display(d.indirizzo)),
-        row('Tel. attività',         display(d.telefono)),
-        row('Email sul sito',        display(d.emailContatto)),
-        row('Orari di apertura',     display(d.orariApertura)),
-        row('Google Maps',           display(d.googleMaps)),
-        row('Social media',          display(d.socialMedia)),
-        row('P.IVA / Ragione soc.',  display(d.pIva)),
-        row('Certificazioni',        display(d.certificazioni)),
-      ])}
+  ${section('Contenuti e struttura', [
+    row('Pagine richieste',           d.pagine),
+    row('Servizi/prodotti',           d.serviziProdotti),
+    row('Testi gi\u00e0 pronti',     d.testiPronti),
+    row('Materiale fotografico',      d.materialeFoto),
+    row('Recensioni/testimonianze',   d.recensioni),
+    row('FAQ',                        d.faq),
+  ])}
 
-      ${section(4, 'Contenuti e struttura', [
-        row('Pagine desiderate',     display(d.pagine)),
-        row('Servizi / prodotti',    display(d.serviziProdotti)),
-        row('Testi pronti',          display(d.testiPronti)),
-        row('Materiale fotografico', display(d.materialeFoto)),
-        row('Recensioni',            display(d.recensioni)),
-        row('FAQ clienti',           display(d.faq)),
-      ])}
+  ${section('Funzionalit\u00e0 richieste', [
+    row('Funzionalit\u00e0 scelte',  d.funzionalita),
+  ])}
 
-      ${section(5, 'Funzionalità richieste', [
-        row('Funzionalità scelte',   display(d.funzionalita)),
-      ])}
+  ${section('Estetica e brand', [
+    row('Logo',                            d.logoDisponibile),
+    row('Colori brand (HEX se noti)',       d.coloriBrand),
+    row('Font preferiti',                  d.fontPreferiti),
+    row('Siti di riferimento/ispirazione', d.sitiIspirazione),
+    row('Concorrenti',                     d.sitiConcorrenti),
+    row('Stile visivo desiderato',         d.stileVisivo),
+  ])}
 
-      ${section(6, 'Riferimenti estetici e brand', [
-        row('Logo disponibile',      display(d.logoDisponibile)),
-        row('Colori brand',          display(d.coloriBrand)),
-        row('Font preferiti',        display(d.fontPreferiti)),
-        row('Siti di ispirazione',   display(d.sitiIspirazione)),
-        row('Siti concorrenti',      display(d.sitiConcorrenti)),
-        row('Stile visivo',          display(stile)),
-      ])}
+  ${section('SEO', [
+    row('Area geografica target',        d.areaGeografica),
+    row('Parole chiave principali',      d.paroleChiave),
+    row('Concorrenti online diretti',    d.concorrentiOnline),
+    row('Sito esistente da migrare',     sitoEs),
+    row('Google Business Profile attivo', d.googleBusiness),
+  ])}
 
-      ${section(7, 'SEO e posizionamento', [
-        row('Area geografica',       display(d.areaGeografica)),
-        row('Parole chiave',         display(d.paroleChiave)),
-        row('Concorrenti online',    display(d.concorrentiOnline)),
-        row('Sito esistente',        display(sitoEs)),
-        row('Google Business',       display(d.googleBusiness)),
-      ])}
+  ${section('Vincoli tecnici e legali', [
+    row('Dominio',                            dominio),
+    row('Budget hosting/servizi a pagamento', d.budget),
+    row('Note privacy/GDPR',                  d.notePrivacy),
+    row('Cliente finale del progetto',        d.perChiSiFa),
+  ])}
 
-      ${section(8, 'Vincoli tecnici e legali', [
-        row('Dominio',               display(dominio)),
-        row('Budget',                display(d.budget)),
-        row('Note privacy',          display(d.notePrivacy)),
-        row('Per chi si fa',         display(d.perChiSiFa)),
-      ])}
+  <!-- Footer -->
+  <div style="padding:14px 32px;background:#f8fafc;text-align:center;font-size:12px;color:#94a3b8;">
+    Richiesta ricevuta il ${esc(d.dataInvio || '')}
+    &nbsp;&middot;&nbsp;
+    Rispondi a <a href="mailto:${esc(d.clienteEmail || d.emailContatto || '')}" style="color:#3b82f6;">${esc(d.clienteEmail || d.emailContatto || 'non specificato')}</a>
+  </div>
 
-    </div><!-- /body -->
-
-    <!-- Footer -->
-    <div style="${CSS.footer}">
-      Richiesta ricevuta il ${esc(d.dataInvio || '')} ·
-      Rispondi a <a href="mailto:${esc(d.clienteEmail || d.emailContatto || '')}" style="color:#3b82f6;">${esc(d.clienteEmail || d.emailContatto || 'non specificato')}</a>
-    </div>
-
-  </div><!-- /card -->
+</div>
 </div>
 </body>
 </html>`;
@@ -314,90 +287,90 @@ function buildEmailHtml(d) {
 // TEMPLATE EMAIL — versione testo piano (fallback)
 // ============================================================
 function buildEmailText(d) {
-  const sep = '\n' + '─'.repeat(50) + '\n';
-  const line = (key, val) => `${key}:\n${display(val)}\n`;
+  const dash = (v) => {
+    if (v === null || v === undefined || v === false || String(v).trim() === '') return '—';
+    return String(v).trim();
+  };
 
-  const tonoDiVoce = d.tonoDiVoce || '';
-  const obPrimario = d.obiettivoPrimario || '';
-  const stile      = d.stileVisivo || '';
-  const dominio    = d.dominio
-    ? d.dominio + (d.dominioNome ? ` (${d.dominioNome})` : '') : '';
-  const sitoEs     = d.sitoEsistente
-    ? d.sitoEsistente + (d.sitoEsistenteUrl ? ` — ${d.sitoEsistenteUrl}` : '') : '';
+  const line = (label, val) => `- ${label}: ${dash(val)}`;
+  const sep  = '─'.repeat(52);
 
-  return `NUOVA RICHIESTA DISCOVERY
-${d.nomeAttivita || 'Nuovo cliente'} — ${d.dataInvio || ''}
-${'═'.repeat(50)}
+  const dominio = d.dominio
+    ? d.dominio + (d.dominioNome ? ` (${d.dominioNome})` : '')
+    : '';
+  const sitoEs = d.sitoEsistente
+    ? d.sitoEsistente + (d.sitoEsistenteUrl ? ` — ${d.sitoEsistenteUrl}` : '')
+    : '';
 
-01 — IDENTITÀ DEL PROGETTO
-${sep}
-${line('Tipo di attività', d.tipoAttivita)}
-${line('Nome / brand', d.nomeAttivita)}
-${line('Nicchia specifica', d.nicchiaSpecifica)}
-${line('Slogan / claim', d.sloganClaim)}
-${line('Tono di voce', tonoDiVoce)}
-${line('Lingue del sito', d.lingue)}
+  const clientLines = [
+    d.clienteNome     && `Nome:     ${d.clienteNome}`,
+    d.clienteEmail    && `Email:    ${d.clienteEmail}`,
+    d.clienteTelefono && `Telefono: ${d.clienteTelefono}`,
+  ].filter(Boolean);
 
-02 — OBIETTIVO E CONVERSIONI
-${sep}
-${line('Obiettivo primario', obPrimario)}
-${line('Obiettivi secondari', d.obiettiviSecondari)}
-${line('Call to action', d.callToAction)}
-${line('Percorso utente', d.percorsoUtente)}
-${line('KPI di successo', d.kpiSuccesso)}
+  return `RICHIESTA DISCOVERY — ${d.nomeAttivita || 'Nuovo cliente'}
+Data: ${d.dataInvio || ''}
+${clientLines.length ? `\nCONTATTI CLIENTE\n${clientLines.join('\n')}\n` : ''}
+${'═'.repeat(52)}
 
-03 — DATI DI CONTATTO
-${sep}
-${line('Nome cliente', d.clienteNome)}
-${line('Email cliente', d.clienteEmail)}
-${line('Tel. cliente', d.clienteTelefono)}
-${line('Indirizzo attività', d.indirizzo)}
-${line('Tel. attività', d.telefono)}
-${line('Email sul sito', d.emailContatto)}
-${line('Orari di apertura', d.orariApertura)}
-${line('Google Maps', d.googleMaps)}
-${line('Social media', d.socialMedia)}
-${line('P.IVA / Ragione sociale', d.pIva)}
-${line('Certificazioni', d.certificazioni)}
+## Identità
+${line('Tipo di attività',    d.tipoAttivita)}
+${line('Nome attività/brand', d.nomeAttivita)}
+${line('Nicchia specifica',   d.nicchiaSpecifica)}
+${line('Slogan/claim',        d.sloganClaim)}
+${line('Tono di voce',        d.tonoDiVoce)}
+${line('Lingua/e del sito',   d.lingue)}
 
-04 — CONTENUTI E STRUTTURA
-${sep}
-${line('Pagine desiderate', d.pagine)}
-${line('Servizi / prodotti', d.serviziProdotti)}
-${line('Testi pronti', d.testiPronti)}
-${line('Materiale fotografico', d.materialeFoto)}
-${line('Recensioni', d.recensioni)}
-${line('FAQ clienti', d.faq)}
+## Obiettivo e conversione
+${line('Obiettivo primario',          d.obiettivoPrimario)}
+${line('Obiettivi secondari',         d.obiettiviSecondari)}
+${line('CTA principale (testo esatto)', d.callToAction)}
+${line('Percorso utente ideale',      d.percorsoUtente)}
+${line('KPI di successo',             d.kpiSuccesso)}
 
-05 — FUNZIONALITÀ RICHIESTE
-${sep}
+## Dati di contatto
+${line('Indirizzo completo',    d.indirizzo)}
+${line('Telefono/WhatsApp',     d.telefono)}
+${line('Email',                 d.emailContatto)}
+${line('Orari di apertura',     d.orariApertura)}
+${line('Maps/coordinate GPS',   d.googleMaps)}
+${line('Social media (link)',   d.socialMedia)}
+${line('P.IVA/Ragione sociale', d.pIva)}
+${line('Certificazioni/premi',  d.certificazioni)}
+
+## Contenuti e struttura
+${line('Pagine richieste',           d.pagine)}
+${line('Servizi/prodotti',           d.serviziProdotti)}
+${line('Testi già pronti',           d.testiPronti)}
+${line('Materiale fotografico',      d.materialeFoto)}
+${line('Recensioni/testimonianze',   d.recensioni)}
+${line('FAQ',                        d.faq)}
+
+## Funzionalità richieste
 ${line('Funzionalità scelte', d.funzionalita)}
 
-06 — RIFERIMENTI ESTETICI E BRAND
-${sep}
-${line('Logo disponibile', d.logoDisponibile)}
-${line('Colori brand', d.coloriBrand)}
-${line('Font preferiti', d.fontPreferiti)}
-${line('Siti di ispirazione', d.sitiIspirazione)}
-${line('Siti concorrenti', d.sitiConcorrenti)}
-${line('Stile visivo', stile)}
+## Estetica e brand
+${line('Logo',                            d.logoDisponibile)}
+${line('Colori brand (HEX se noti)',       d.coloriBrand)}
+${line('Font preferiti',                  d.fontPreferiti)}
+${line('Siti di riferimento/ispirazione', d.sitiIspirazione)}
+${line('Concorrenti',                     d.sitiConcorrenti)}
+${line('Stile visivo desiderato',         d.stileVisivo)}
 
-07 — SEO E POSIZIONAMENTO
-${sep}
-${line('Area geografica', d.areaGeografica)}
-${line('Parole chiave', d.paroleChiave)}
-${line('Concorrenti online', d.concorrentiOnline)}
-${line('Sito esistente', sitoEs)}
-${line('Google Business Profile', d.googleBusiness)}
+## SEO
+${line('Area geografica target',        d.areaGeografica)}
+${line('Parole chiave principali',      d.paroleChiave)}
+${line('Concorrenti online diretti',    d.concorrentiOnline)}
+${line('Sito esistente da migrare',     sitoEs)}
+${line('Google Business Profile attivo', d.googleBusiness)}
 
-08 — VINCOLI TECNICI E LEGALI
-${sep}
-${line('Dominio', dominio)}
-${line('Budget', d.budget)}
-${line('Note privacy', d.notePrivacy)}
-${line('Per chi si fa', d.perChiSiFa)}
+## Vincoli tecnici e legali
+${line('Dominio',                            dominio)}
+${line('Budget hosting/servizi a pagamento', d.budget)}
+${line('Note privacy/GDPR',                  d.notePrivacy)}
+${line('Cliente finale del progetto',        d.perChiSiFa)}
 
-${'═'.repeat(50)}
+${'═'.repeat(52)}
 Richiesta inviata il ${d.dataInvio || ''}
 Rispondi a: ${d.clienteEmail || d.emailContatto || 'non specificato'}
 `;
